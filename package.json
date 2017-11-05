@@ -1,0 +1,23 @@
+{
+    "name": "piebasic-ts",
+    "version": "1.0.0",
+    "license": "MIT",
+    "scripts": {
+        "start": "http-server -c-1 -p 8888 ./ -o",
+        "build": "tsc --watch"
+    },
+    "devDependencies": {
+        "cpy-cli": "^1.0.1",
+        "cpx": "^1.5.0",
+        "http-server": "^0.9.0",
+        "rollup": "^0.41.4",
+        "rollup-plugin-node-resolve": "^2.0.0",
+        "rollup-plugin-typescript": "^0.8.1",
+        "typescript": "^2.2.0",
+        "concurrently": "^3.5.0"
+    },
+    "dependencies": {
+        "typescript-starter": "^1.2.1"
+    },
+    "private": true
+}

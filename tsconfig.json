@@ -1,0 +1,28 @@
+{
+
+    "compilerOptions": {
+        "outFile": "piebasic.js",
+        "rootDir": "src",
+
+        "declaration": false,
+        "removeComments": true,
+        "lib": [
+            "es5",
+            "dom"
+        ],
+        "target": "es5",
+
+        "importHelpers": false,
+        "inlineSourceMap": false,
+        "listFiles": false,
+        "traceResolution": false,
+        "pretty": true,
+        "baseUrl": ".", // required for "paths"
+        "paths": {
+            "piebasic-ts": ["src/piebasic.ts"] // write tests without relative paths
+        }
+    },
+    "include": [
+        "src/*.ts"
+    ]
+}
