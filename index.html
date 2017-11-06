@@ -3,6 +3,47 @@
 <body>
     <canvas id="myCanvas"></canvas>
     <script type="text/javascript" src="piebasic.js"></script>
+    <script>
+        var config = [{
+            'value': 10,
+            'image': 'src/pie-1.png',
+            'color': 'green',
+            'url': 'http://google.com'
+        }, {
+            'value': 10,
+            'image': null,
+            'color': '#f16e23',
+            'url': 'green2.com'
+        }, {
+            'value': 10,
+            'image': null,
+            'color': '#57d9ff',
+            'url': 'green3.com'
+        }, {
+            'value': 10,
+            'image': null,
+            'color': '#937e88',
+            'url': 'green4.com'
+        }, {
+            'value': 10,
+            'image': null,
+            'url': 'green5.com'
+        }, ];
+
+        var myCanvas = document.getElementById("myCanvas");
+
+        myCanvas.width = 500;
+        myCanvas.height = 500;
+
+
+        var piebasic = new PieBasic(config, myCanvas);
+        piebasic.draw();
+        // var myPiechart = new Piechart2({
+        // canvas: myCanvas,
+        // data: config
+        // });
+        // myPiechart.draw();
+    </script>
 </body>
 
 </html>

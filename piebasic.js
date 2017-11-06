@@ -1,5 +1,6 @@
 var PieSegment = (function () {
     function PieSegment(_x, _y, _sAngle, _eAngle, _url, _image, _radius, _color) {
+        if (_color === void 0) { _color = "transparent"; }
         this._x = _x;
         this._y = _y;
         this._sAngle = _sAngle;
@@ -12,6 +13,7 @@ var PieSegment = (function () {
     ;
     PieSegment.prototype.draw = function (ctx) {
         var pattern;
+        this._ctx = ctx;
         if (this.image) {
             var imageObj_1 = new Image();
             imageObj_1.src = this.image;
@@ -72,20 +74,51 @@ var PieBasic = (function () {
     PieBasic.prototype.initClickEvent = function () {
         var obj = this;
         this._canvas.addEventListener('click', function (e) {
-            var x = e.pageX - this.offsetLeft - this.width / 2, y = e.pageY - this.offsetTop - this.height / 2, mAngle = Math.atan2(y, x);
+            var x = e.pageX - obj.getOffset.left - this.width / 2, y = e.pageY - obj.getOffset.top - this.height / 2, mAngle = Math.atan2(y, x);
             if (mAngle > -1 * Math.PI && mAngle < -0.5 * Math.PI) {
                 mAngle = 2 * Math.PI + mAngle;
             }
             var percentage = (mAngle + Math.PI / 2) / 2 * Math.PI * 10;
             for (var i = 0; i < obj.segments.length; i++) {
                 if ((mAngle > obj.segments[i].startAngle) && (mAngle < obj.segments[i].endAngle)) {
-                    console.log(obj.segments[i].url);
                     var win = window.open(obj.segments[i].url, '_blank');
                     win.focus();
                 }
             }
         });
     };
+    PieBasic.prototype.initMouseHover = function () {
+        var obj = this;
+        this._canvas.addEventListener('mousemove', function (e) {
+            var x = e.pageX - obj.getOffset.left - this.width / 2, y = e.pageY - obj.getOffset.top - this.height / 2, mAngle = Math.atan2(y, x);
+            if (mAngle > -1 * Math.PI && mAngle < -0.5 * Math.PI) {
+                mAngle = 2 * Math.PI + mAngle;
+            }
+            var percentage = (mAngle + Math.PI / 2) / 2 * Math.PI * 10;
+            for (var i = 0; i < obj.segments.length; i++) {
+                if ((mAngle > obj.segments[i].startAngle) && (mAngle < obj.segments[i].endAngle)) {
+                    obj[i].ctx;
+                }
+            }
+        });
+    };
+    Object.defineProperty(PieBasic.prototype, "getOffset", {
+        get: function () {
+            var top = 0, left = 0;
+            var element = this._canvas;
+            do {
+                top += element.offsetTop || 0;
+                left += element.offsetLeft || 0;
+                element = element.offsetParent;
+            } while (element);
+            return {
+                top: top,
+                left: left
+            };
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(PieBasic.prototype, "ctx", {
         get: function () {
             return this._ctx;
@@ -112,39 +145,3 @@ var PieBasic = (function () {
     };
     return PieBasic;
 }());
-var config = [{
-        'value': 10,
-        'image': 'src/pie-1.png',
-        'color': 'green',
-        'url': 'http://google.com'
-    },
-    {
-        'value': 10,
-        'image': null,
-        'color': '#f16e23',
-        'url': 'green2.com'
-    },
-    {
-        'value': 10,
-        'image': null,
-        'color': '#57d9ff',
-        'url': 'green3.com'
-    },
-    {
-        'value': 10,
-        'image': null,
-        'color': '#937e88',
-        'url': 'green4.com'
-    },
-    {
-        'value': 10,
-        'image': null,
-        'color': '#ff0011',
-        'url': 'green5.com'
-    },
-];
-var myCanvas = document.getElementById("myCanvas");
-myCanvas.width = 500;
-myCanvas.height = 500;
-var piebasic = new PieBasic(config, myCanvas);
-piebasic.draw();

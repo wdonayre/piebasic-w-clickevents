@@ -1,5 +1,6 @@
 
 class PieSegment{
+    private _ctx:any;
     constructor(
         private _x      : number,
         private _y      : number,
@@ -8,11 +9,12 @@ class PieSegment{
         private _url    : string,
         private _image  : string,
         private _radius : number,
-        private _color  : string
+        private _color  : string = "transparent"
     ){};    
 
     public draw(ctx:any){
         let pattern : any;
+        this._ctx = ctx;
         if(this.image){
             let imageObj = new Image();
             
@@ -32,7 +34,9 @@ class PieSegment{
         ctx.moveTo(this._x, this._y);
         ctx.arc(this._x, this._y, this._radius, this._sAngle, this._eAngle);
         ctx.closePath();
-        ctx.fill();    
+        ctx.fill();   
+        
+        //console.log("Start Angle: " + this.startAngle + "   EndAngle: " + this.endAngle);
     }
 
     get startAngle(){
@@ -70,25 +74,65 @@ class PieBasic{
     private initClickEvent(){
         let obj = this;
         this._canvas.addEventListener('click', function(e) {
-            var x = e.pageX - this.offsetLeft - this.width / 2,
-                y = e.pageY - this.offsetTop - this.height / 2,
+            
+            let x = e.pageX - obj.getOffset.left - this.width / 2,
+                y = e.pageY - obj.getOffset.top - this.height / 2,
                 mAngle = Math.atan2(y, x);
 
             if (mAngle > -1 * Math.PI && mAngle < -0.5 * Math.PI) {
                 mAngle = 2 * Math.PI + mAngle;
             }
-
-            var percentage = (mAngle + Math.PI / 2) / 2 * Math.PI * 10;
+            //console.log("x&y: "+x+":"+y+"   PageX: "+e.pageX+"   PageY: "+e.pageY+"   OffesetLeft: "+this.offsetLeft+"   OffsetTop:"+this.offsetTop+"    Width: "+this.width+"   Height:"+this.height);
+            let percentage = (mAngle + Math.PI / 2) / 2 * Math.PI * 10;
             //console.log("X: " + x + "  Y: " + y + "  mAngle: " + mAngle + "  percentage: " + percentage);
-            for(var i=0;i<obj.segments.length;i++){
+            for(let i=0;i<obj.segments.length;i++){
                 if((mAngle > obj.segments[i].startAngle) && (mAngle < obj.segments[i].endAngle)){
-                    console.log(obj.segments[i].url);
-                    var win = window.open(obj.segments[i].url, '_blank');
+                    //console.log("X and Y: "+x+":"+y+"   mAngle: "+mAngle+"   URL: "+obj.segments[i].url);
+                    
+                    let win = window.open(obj.segments[i].url, '_blank');
                     win.focus();
                 }
             }
             
         });
+    }
+
+    private initMouseHover(){
+        let obj = this;
+        this._canvas.addEventListener('mousemove', function(e) {
+            
+            let x = e.pageX - obj.getOffset.left - this.width / 2,
+                y = e.pageY - obj.getOffset.top - this.height / 2,
+                mAngle = Math.atan2(y, x);
+
+            if (mAngle > -1 * Math.PI && mAngle < -0.5 * Math.PI) {
+                mAngle = 2 * Math.PI + mAngle;
+            }
+            //console.log("x&y: "+x+":"+y+"   PageX: "+e.pageX+"   PageY: "+e.pageY+"   OffesetLeft: "+this.offsetLeft+"   OffsetTop:"+this.offsetTop+"    Width: "+this.width+"   Height:"+this.height);
+            let percentage = (mAngle + Math.PI / 2) / 2 * Math.PI * 10;
+            //console.log("X: " + x + "  Y: " + y + "  mAngle: " + mAngle + "  percentage: " + percentage);
+            for(let i=0;i<obj.segments.length;i++){
+                if((mAngle > obj.segments[i].startAngle) && (mAngle < obj.segments[i].endAngle)){
+                    obj[i].ctx
+                }
+            }
+            
+        });    
+    }
+
+    get getOffset(){
+        let top = 0, left = 0;
+        let element = this._canvas;
+        do {
+            top += element.offsetTop  || 0;
+            left += element.offsetLeft || 0;
+            element = element.offsetParent;
+        } while(element);
+    
+        return {
+            top: top,
+            left: left
+        };
     }
 
     //Canvas Context
@@ -97,7 +141,7 @@ class PieBasic{
     }
     
     public draw(){
-        
+        //console.log(this.segments);
         let tmpTotal = 0;
         for (var i = 0; i < this._config.length; i++) {
             tmpTotal += this._config[i].value;
@@ -133,48 +177,3 @@ class PieBasic{
 }
 
 
-var config = [{
-    'value': 10,
-    'image': 'src/pie-1.png', 
-    'color': 'green',
-    'url': 'http://google.com'
-},
-{
-    'value': 10,
-    'image': null,
-    'color': '#f16e23',
-    'url': 'green2.com'
-},
-{
-    'value': 10,
-    'image': null,
-    'color': '#57d9ff',
-    'url': 'green3.com'
-},
-{
-    'value': 10,
-    'image': null,
-    'color': '#937e88',
-    'url': 'green4.com'
-},
-{
-    'value': 10,
-    'image': null,
-    'color': '#ff0011',
-    'url': 'green5.com'
-},
-];
-
-let myCanvas = <HTMLCanvasElement>document.getElementById("myCanvas");
-
-myCanvas.width = 500;
-myCanvas.height = 500;
-
-
-let piebasic = new PieBasic(config,myCanvas);
-piebasic.draw();
-// var myPiechart = new Piechart2({
-// canvas: myCanvas,
-// data: config
-// });
-// myPiechart.draw();
